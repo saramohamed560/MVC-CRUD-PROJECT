@@ -1,0 +1,152 @@
+** HttpGet Action --> send info from DB to view through model Or Just for display view
+** HttpPost Action -->Get info from view Then I Will store in DB
+Action post take parameter model to send it to view as view model
+(this is called  Modelbinding and it is one direction)
+---------------------------------------------------------
+Main Data ---> Model
+to send extra data from action to view Through View Dictionary(KeyValuePair)[one way]
+-we can access this dictionary through ViewData & ViewBag
+---------------------(ViewData)-------------
+--Dictionary inherited from Controller Class
+            Key-->string
+            Value--->object
+---------------------(ViewBag)---------------
+Dynamic Property inherited from Controller Class
+
+ViewData is faster bec type is detected At Compilation Time
+ViewData is type safe -- View Bag May Through Exception at run time
+ViewBag Advantage doesnot require type casting
+-----------------------------------------
+we can use ViewData & ViewBag to send data from 
+Action-->view
+view to partial view
+view-->layout
+----------TempData-----------
+Dictionary type like view data 
+using to send data between two consecutive request(from action to action)
+or from request to subrequest(redirection)
+Life Time Until read.
+life time of both viewdata & viewbag is one request
+** ViewData&ViewBag Using the same Ditionary but Temp data use another one
+Using TempData.Keep() (after read it) To save TempData for more tan two consecutive requests
+
+================================================================================
+        Scopped ,Transiant ,Singlton
+1. Scoped :
+           LifeTime:Create one object per request , once request Finished object will be unreachable in Heap
+           such :All Repositories
+2. Transiant:
+            LifeTime : every time you require object in the same request , it will create it
+            such Services for mapping
+3.Singlton:CLR Will Create only one object per LifeTime Of Application
+ --Cashing Services 
+ --Login Services
+ ==================================================================
+                          Mapping
+Action(get)[Index, Details]===>Map from model to view model
+Action(post)[create, update,delete]===>Map from viewModel to  model
+Send to View--> ViewModel
+Send to DB---> Model
+
+Mapping Steps
+1.Install AutoMapper Package  in PL
+2.Inject IMapper in ctor
+3.Allow DI
+3.Map when we need Like (var mappedEmp=mapper.Map<EmployeeViewModel,Employee>(employeeVM))
+4.Create Folder =>Helper=>class MappingProfiles that inherit ProfileClass
+=============================================================
+         UnitOfWork Design Pattern
+class that represe unit of all work with DB
+-- Each DB context has IUnitOfwork interface
+-- IUnitOfWork include signature for  property for each repository
+--Include Sigature for complete method represent savechanges
+
+controller call -->UnitOfWork --->call repositories through Dbcontext
+
+==================================================================
+                  Document Settings
+To Upload Files
+          - store Name of file in DB 
+====================================================================
+           Security(Authentication & Authorization)
+Step 0: Identification(Registeration) > Have an accout at web App ?
+step 1: Authentication 
+             1- who are you ? Login(UserName , Password)
+             2- where you come
+                1. Local(I already have an account)
+                2.External server(Login Using External server as login with Facebook Account)
+                3. Federated Server (Souq -> Amazon)
+                4.Active Directory : Is A Windows Service such as sqlserverservices
+                      installed in special server available for limited specific no of users
+                      not any one can create account
+
+
+step 2:Authorization 
+       What Can I Do ?
+            Roles (Each Group Of Users  Have a Specified Roles)
+
+**We have two important tables (User , Role) 
+**between user & Role Many To Many Relationship
+---------------------------------------------------
+Security at Asp.Net -->Using Identity Package
+this package has three main services
+
+--Identification(Registeraion)-->UserManager(Identity user)
+    1.create (Sign Up)
+    2.Delete
+    3.Update
+    4.Read User Data
+    5.Confirm Account
+--Authentication -->SignInManager (Identity User)
+    1.sign in
+    2.sign out
+    3.IsSigned
+    4.Reset Password 
+    5.Two Factor Authentication
+    6.OTP Authentication
+    7.External Login
+--Authorization --> Role Manager(IdentityRole)
+   1.Create Role
+   2.Update Role
+   3.Delete Role
+   ===============================================
+   By Default We Have two main domain model (IdentityUser & IdentityRole)
+   --when i need extra properties in IdentityUser or IdentityRole Table I will create this table by myself
+   -- there are 4 versions from IdentityDbContext
+      1 Non Generic 
+      --dbset for IdentityUser represent User
+      --dbset for IdentityRole represent role
+      --PK String
+      3 Generic
+      - to change IdentityUser (IdentityDbContext<IdentityUser>)
+      - to change IdentityRole (IdentityDbContext<IdentityRole>)
+      - to change IdentityUser , IdentityRole ,PK (IdentityDbContext<IdentityUser,IdentityRole,string>)
+      ==========================================================================
+                            Token
+    1. when i login to netflex with userName and Password , username&password wil be sent in 
+    reqest 
+    2. netflex will resoponse me with Token (encrypted string )
+    this token represent me in netflex
+
+    usings of token
+    1- in security(Authorization & Authentication)
+    2.if i need to send to user Secret Message (information Exchange)
+
+    UserClaims==> userName ,Password ,Address
+     **Every Token Has Schema (for authorization) 
+
+
+
+    Security Model Steps
+    1.DAL 
+      1.1- install Identity Package
+      1.2- make AppDbContext inherit from IdentityDbContext
+      1.3-Add Migration
+      1.4-update-database
+    2.Pl
+      2.1 Add Account Controller
+
+           
+
+
+     
