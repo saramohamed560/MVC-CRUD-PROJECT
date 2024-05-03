@@ -1,10 +1,13 @@
 ﻿using Demo.DAL.Models;
 using Demo.PL.Helper;
 using Demo.PL.Models;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Demo.PL.Controllers
 {
@@ -13,14 +16,17 @@ namespace Demo.PL.Controllers
     {
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly ImailSettings _mailSettings;
 
 		public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager
+            SignInManager<ApplicationUser> signInManager,
+			ImailSettings mailSettings
             )
         {
 			_userManager = userManager;
 			_signInManager = signInManager;
+			_mailSettings = mailSettings;
 		}
 		#region Sign Up
 		public IActionResult SignUp()
@@ -91,10 +97,41 @@ namespace Demo.PL.Controllers
 			}
 			return View(model);
 		}
-		#endregion
 
-		#region SignOut
-		public async  new Task<IActionResult> SignOut()
+
+        // GoogleLogin
+        public IActionResult GoogleLogin()
+        {
+            var prop = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
+        }
+
+        // GoogleResponse
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(
+
+                claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value,
+                }
+                );
+
+            return RedirectToAction("Index", "Home");
+        }
+        #endregion
+
+        #region SignOut
+        public async  new Task<IActionResult> SignOut()
 		{
 			//New bec Homecontroller inherit SignOut from Controller
 			await _signInManager.SignOutAsync(); //remove  token from Cookies
@@ -127,7 +164,7 @@ namespace Demo.PL.Controllers
 						Recipients = model.Email,
 						Body = resetPasswordUrl
 					};
-					EmailSettings.SendEmail(email);
+					_mailSettings.SendMail(email);
 					return RedirectToAction(nameof(CheckYourInbox));
 				}
 				ModelState.AddModelError(string.Empty, "Invalid Email");

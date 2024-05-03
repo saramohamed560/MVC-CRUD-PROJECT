@@ -44,8 +44,28 @@ namespace Demo.PL.Controllers
             var mappedEmployees=mapper.Map<IEnumerable<Employee>,IEnumerable< EmployeeViewModel>>(employees);
             return View(mappedEmployees);
         }
-        //BaseUrl/Employee/Create => Request
-        public IActionResult Create()
+
+		public async Task<IActionResult> Search(string SearchInp)
+		{
+			var employees = Enumerable.Empty<Employee>();
+
+
+			if (string.IsNullOrEmpty(SearchInp))
+			{
+				employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
+			}
+			else
+			{
+				employees =  _unitOfWork.EmployeeRepository.SearchByName(SearchInp.ToLower());
+
+			}
+			var result = mapper.Map<IEnumerable<EmployeeViewModel>>(employees);
+
+			return PartialView("EmployeeTablePartialView", result);
+		}
+
+		//BaseUrl/Employee/Create => Request
+		public IActionResult Create()
         {
             return View();
         }

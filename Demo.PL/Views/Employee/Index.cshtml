@@ -1,30 +1,4 @@
 ﻿@model IEnumerable<EmployeeViewModel>
-
-@* @{
-    ViewData["Title"] = "Index";
-    string viewDataMessage=ViewData["Message"] as string ;//Enforce Type Saftey
-                                                          //Require Type Casting
-                                                          //c# strongly Typed Language
-    string VDataMessage = ViewBag.Message;
-    //Compiler Cannot Enforce Type Saftey-->not require type Casting --C# as Weakly Typed Lang
-} *@
-@* <div class="alert alert-warning">
-  @ViewData["Message"]
-</div> *@
-
-@* 
-view Bg access the same dictionary of view data
-<div class="alert alert-success">
-    @ViewBag.Message
-</div> *@
-
-@* @if(!string.IsNullOrEmpty(TempData["Message"] as string))
-{
-     <div class="alert alert-primary">
-        @TempData["Message"]
-    </div>
-} *@
-
 <h1>All Employees</h1>
 <br />
 <br />
@@ -36,7 +10,7 @@ view Bg access the same dictionary of view data
 <div class="row justify-content-center align-items-center mg-5">
     <form asp-action="Index" class=" row col-8 offset-2">
         <div class="col-8">
-            <input type="text" class="form-control" name="SearchInp"  placholder="Search By Name" />
+            <input type="text" class="form-control" name="SearchInp" id="SearchInp" placholder="Search By Name" />
         </div>
         <div class="col-4">
         <input type="submit" class="btn btn-success" />
@@ -82,8 +56,6 @@ view Bg access the same dictionary of view data
                     <td>@emp.HireDate</td>
                     <td>@emp.PhoneNumber</td>
                     <partial name="_ButtonsPartial" model="@emp.Id.ToString()">
-                     
-                 
                 </tr>
             }
         </tbody>
@@ -95,4 +67,25 @@ else
         <h3>There is No Employees :(</h3>
     </div>
 }
+<script>
+    const searchBar = $('#SearchInp');
+    const table = $('table');
+
+    searchBar.on('keyup', function (event) {
+        var searchValue = searchBar.val();
+
+        $.ajax({
+            url: '/Employee/Search',
+            type: 'Get',
+            data: { SearchInp: searchValue },
+            success: function (result) {
+                table.html(result)
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+            }
+        })
+    })
+</script>
+
 

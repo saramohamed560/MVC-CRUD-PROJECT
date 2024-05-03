@@ -2,8 +2,10 @@ using Demo.DAL.Data;
 using Demo.DAL.Models;
 using Demo.PL.Extensions;
 using Demo.PL.Helper;
+using Demo.PL.Settings;
 using Demp.BLL.Interfaces;
 using Demp.BLL.Repositories;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -61,14 +63,29 @@ namespace Demo.PL
                 config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             });
 
+			// MailKit
+			services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+			services.AddTransient<ImailSettings, EmailSettings>();
 
+           // External Login with Google
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            }).AddGoogle(o =>
+            {
+                IConfiguration GoogleAuthSection = Configuration.GetSection("Authentication:Google");
+                o.ClientId = GoogleAuthSection["ClientId"];
+                o.ClientSecret = GoogleAuthSection["ClientSecret"];
+
+            });
 
 
         }
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		// app => Kestrel
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // app => Kestrel
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
