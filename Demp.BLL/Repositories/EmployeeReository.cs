@@ -26,5 +26,11 @@ namespace Demp.BLL.Repositories
 
         public IQueryable<Employee> SearchByName(string name)
        => context.Employees.Where(E => E.Name.ToLower().Contains(name));
+
+        public void DetachEnitity(Employee employee)
+        {
+            var entry = context.Entry(employee);
+            entry.State = EntityState.Detached;
+        }
     }
 }

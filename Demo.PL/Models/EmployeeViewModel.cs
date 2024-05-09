@@ -10,7 +10,7 @@ namespace Demo.PL.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Name is required")]
         [MaxLength(50, ErrorMessage = "Max Length is 50 chars")]
-        [MinLength(5, ErrorMessage = "Min Length is 5 chars")]
+        [MinLength(3, ErrorMessage = "Min Length is 3 chars")]
         public string Name { get; set; }
         [Range(18, 60)]
 

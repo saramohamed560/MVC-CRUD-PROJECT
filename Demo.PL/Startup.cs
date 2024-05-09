@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,24 +58,31 @@ namespace Demo.PL
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-           
+
             services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/SignIn";
                 config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             });
-
-			// MailKit
-			services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(config =>
+                    {
+                        config.LoginPath = "/Account/SignIn";
+                        config.AccessDeniedPath = "/Home/Error";
+                    });
+            // MailKit
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
 			services.AddTransient<ImailSettings, EmailSettings>();
 
 
             // External Login with Google
             services.AddAuthentication(o =>
             {
-                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-            }).AddGoogle(o =>
+            }
+            ).AddGoogle(o =>
             {
                 IConfiguration GoogleAuthSection = Configuration.GetSection("Authentication:Google");
                 o.ClientId = GoogleAuthSection["ClientId"];

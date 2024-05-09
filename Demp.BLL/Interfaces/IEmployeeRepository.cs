@@ -15,5 +15,6 @@ namespace Demp.BLL.Interfaces
 
 
         IQueryable<Employee> SearchByName(string name);
+       void DetachEnitity(Employee employee);
     }
 }

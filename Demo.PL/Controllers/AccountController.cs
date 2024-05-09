@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Demo.PL.Controllers
 {
-	//[AllowAnonymous]//default allow anyone to call actions
+	
     public class AccountController : Controller
     {
 		private readonly UserManager<ApplicationUser> _userManager;
