@@ -30,12 +30,9 @@ namespace Demo.PL.Controllers
         }
 		public async Task< IActionResult> Index(string SearchValue)
 		{
-			var users = Enumerable.Empty<UserViewModel>();
-
-
 			if (string.IsNullOrEmpty(SearchValue))
 			{
-				users = await _userManager.Users.Select(U => new UserViewModel()
+				var users = await _userManager.Users.Select(U => new UserViewModel()
 				{
 					Id = U.Id,
 					Fname = U.FName,
@@ -44,11 +41,11 @@ namespace Demo.PL.Controllers
 					PhoneNumber=U.PhoneNumber,
 					Roles = _userManager.GetRolesAsync(U).Result
 				}).ToListAsync();
-			}
-			else
+                return View(users);
+            }
+            else
 			{
-
-				users = await _userManager.Users.Where(U => U.Email
+				var users = await _userManager.Users.Where(U => U.Email
 								  .ToLower()
 								  .Contains(SearchValue.ToLower()))
 								  .Select(U => new UserViewModel()
@@ -61,8 +58,8 @@ namespace Demo.PL.Controllers
 									  Roles = _userManager.GetRolesAsync(U).Result
 								  }).ToListAsync();
 
-			}
 			return View(users);
+			}
 
 		}
 		public async Task<IActionResult> Search(string SearchValue)

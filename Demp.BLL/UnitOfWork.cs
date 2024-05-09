@@ -28,9 +28,12 @@ namespace Demp.BLL
         {
             return _dbContext.SaveChangesAsync();
         }
-        public void Dispose() //CLR Call It
+     
+
+        public async ValueTask DisposeAsync()
         {
-            _dbContext.Dispose();
+           await  _dbContext.DisposeAsync();
+
         }
         //Once reqest finished Object from unit of work wil be unreachable in heap 
         //but still exist and openning connection with Dbcontext (bec it ask CLR to create obkect from DbContext)

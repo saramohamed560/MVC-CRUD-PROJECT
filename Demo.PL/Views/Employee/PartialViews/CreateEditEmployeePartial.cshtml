@@ -1,31 +1,17 @@
 ﻿@model EmployeeViewModel
 @inject IUnitOfWork _unitOfWork
-@*  I Will Inject here (Interfaces and classes) when not all actions need object from them
-such as IDepartmentRepository _departmentrepo (Index action does 
-not require object from it) so it is not prefer to inject in ctor of controller *@
+
 @{
     var departments = new SelectList(
         await _unitOfWork.DepartmentRepository.GetAllAsync(),
-        /* ViewData["Departments"] as IEnumerable<Department> */
-        nameof(Department.Id), // Value I will take 
-        nameof(Department.Name) //Label that will appear
-    
+        nameof(Department.Id), 
+        nameof(Department.Name) 
     );
-
-    // I need to make each option label that will appear to be Department name
-    // ,Value I will hold DpartmentId 
-    //when select option it will take value(option) put it in asp-for(select)
 }
  <div class="form-group">
         <label class="col-form-label" asp-for="Name"></label>
-    @*  asp for ---> 1. for="Code"
-                     2.Value of label(Code) *@
         <input asp-for="Name" class="form-control" />
-    @*  asp for ---> 1. name="Code"
-                          2. id="Code" 
-                          3.type based on type of property*@
         <span class="text-danger" asp-validation-for="Name"></span>
-    @*  required for input that has validation , must be span *@
     </div>
 
      <div class="form-group">
@@ -59,9 +45,7 @@ not require object from it) so it is not prefer to inject in ctor of controller 
         <label class="col-form-label" asp-for="Department"></label>
         <select  class="form-control"  asp-for="DepartmentId" asp-items="@departments">
               <option value="@null"> --- Select Department ---</option>
-            @* Default Option null--> if no department chosen *@
         </select>
-       @*  asp-items take type of ISelectList *@
     </div>
      <div class="form-group">
         <label class="col-form-label" asp-for="HireDate"></label>

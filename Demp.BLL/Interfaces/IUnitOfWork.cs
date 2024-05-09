@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demp.BLL.Interfaces
 {
-    public interface IUnitOfWork :IDisposable
+    public interface IUnitOfWork :IAsyncDisposable
     {
         //Signature of properties of type Repositories
         public IDepartmentRepository DepartmentRepository { get; set; }

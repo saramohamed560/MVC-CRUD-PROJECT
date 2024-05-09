@@ -5,6 +5,7 @@ using Demo.PL.Helper;
 using Demo.PL.Settings;
 using Demp.BLL.Interfaces;
 using Demp.BLL.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -51,7 +52,7 @@ namespace Demo.PL
                 config.Password.RequireLowercase = true;
 
                 config.User.RequireUniqueEmail = true;
-                config.Lockout.MaxFailedAccessAttempts = 3;//Available no of tries
+                config.Lockout.MaxFailedAccessAttempts = 3;
                 config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMilliseconds(1000);
             })
                 .AddEntityFrameworkStores<AppDbContext>()
@@ -67,7 +68,8 @@ namespace Demo.PL
 			services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
 			services.AddTransient<ImailSettings, EmailSettings>();
 
-           // External Login with Google
+
+            // External Login with Google
             services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
@@ -79,8 +81,6 @@ namespace Demo.PL
                 o.ClientSecret = GoogleAuthSection["ClientSecret"];
 
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -94,7 +94,7 @@ namespace Demo.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute]int id ,DepartmentViewModel departmentViewModel)
+        public  async Task<IActionResult> Delete([FromRoute]int id ,DepartmentViewModel departmentViewModel)
         {
             if (id != departmentViewModel.Id)
                 return BadRequest();
@@ -106,7 +106,7 @@ namespace Demo.PL.Controllers
 
 
                     _unitOfWork.DepartmentRepository.Delete(mappedDept);
-                    _unitOfWork.Complete();
+                    await _unitOfWork.Complete();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)

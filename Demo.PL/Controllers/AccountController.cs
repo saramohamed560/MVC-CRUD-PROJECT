@@ -83,14 +83,8 @@ namespace Demo.PL.Controllers
 					if (flag) //Correct Password 
 					{
 						var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
-						//Third parameter represent IsPresist 
-						//Browser has 3 places for storage (Local ,Session ,Cookie)
-						//Token(In MVC) stored in cookie storage
-						//Ispresistant represent if token  will be exist after browser closed --> based on remember me
-						//forth parameter enable Lokout
 						if (result.Succeeded)
 							return RedirectToAction(nameof(HomeController.Index), "Home");
-
 						}
 				}
 				ModelState.AddModelError(string.Empty, "Invalid Login");

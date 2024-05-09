@@ -35,13 +35,6 @@ namespace Demp.BLL.Repositories
 
         public  async Task<T> GetAsync(int id)
         {
-            // first search Local (if entity with id is exists in local memory)
-            //var department =  context.Departments.Local.Where(D => D.Id == id).FirstOrDefault();
-            //if(department == null)
-            //    department = _dbContext.Departments.Where(D => D.Id == id).FirstOrDefault();
-            //return department;
-            // -------------- Find Search by Id locally if not exists => search in Database
-         //   return context.Set<T>().Find(id);
             return  await context.FindAsync<T>(id);
         }
 
@@ -51,7 +44,6 @@ namespace Demp.BLL.Repositories
               return (IEnumerable<T>) await context.Set<Employee>().Include(E=>E.Department).ToListAsync();
             else
                 return await context.Set<T>().AsNoTracking().ToListAsync();
-            // To Eager Load Navigational Property Department in Employee Model
         }
         
 

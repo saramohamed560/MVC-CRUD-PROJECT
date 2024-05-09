@@ -138,7 +138,7 @@ namespace Demo.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult >Delete([FromRoute] int id, EmployeeViewModel employeeVM)
+        public async Task<IActionResult>Delete([FromRoute] int id, EmployeeViewModel employeeVM)
         {
             if (id != employeeVM.Id)
                 return BadRequest();
@@ -146,19 +146,21 @@ namespace Demo.PL.Controllers
             {
                 try
                 {
-                    var mappedEmp = mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                    _unitOfWork.EmployeeRepository.Delete(mappedEmp);
-                  var count= await  _unitOfWork.Complete();
-                    if (count > 0)
-                    {
-                        DocumentSettings.DeleteFile(employeeVM.ImageName, "Images");
-                    }
-                    return RedirectToAction(nameof(Index));
+                var mappedEmp = mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+                _unitOfWork.EmployeeRepository.Delete(mappedEmp);
+                var count = await _unitOfWork.Complete();
+                if (count > 0)
+                    DocumentSettings.DeleteFile(employeeVM.ImageName, "Images");
+                return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+
                 }
+
+
+
             }
             return View(employeeVM);
         }
